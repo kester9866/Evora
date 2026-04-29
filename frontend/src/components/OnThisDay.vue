@@ -1,7 +1,7 @@
 <template>
   <div class="on-this-day">
     <div class="otd-inner">
-      <h3>历史上的今天</h3>
+      <h3>“小芝士”</h3>
       <div v-if="loading" class="otd-loading">加载中...</div>
       <div v-else-if="event" class="otd-event">
         <p class="otd-description">{{ event.description }}</p>

@@ -297,19 +297,26 @@ watch(bridgePage, () => { fetchBridges() })
 .tab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .tab-header h2 { margin: 0; font-size: 18px; }
 .add-btn {
-  padding: 8px 16px;
-  background: #6B4F3A;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #6B4F3A, #7d5e4a);
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(107,79,58,0.2);
 }
-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+.add-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(107,79,58,0.3);
+}
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.04); }
 th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-th { background: #f5f0ea; font-weight: 600; }
+th { background: linear-gradient(180deg, #f5f0ea, #f0ebe3); font-weight: 600; }
 .actions { display: flex; gap: 8px; }
-.actions button { padding: 4px 10px; background: #8A9A9A; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.actions button { padding: 6px 12px; background: #8A9A9A; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; transition: all 0.2s ease; }
+.actions button:hover { background: #6B4F3A; }
 .actions button.delete { background: #e74c3c; }
 .pagination { display: flex; align-items: center; gap: 12px; margin-top: 16px; justify-content: center; }
 .pagination button { padding: 6px 14px; background: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
@@ -336,6 +343,15 @@ th { background: #f5f0ea; font-weight: 600; }
 .checkbox-label { flex-direction: row !important; align-items: center; gap: 8px; }
 .form-actions { display: flex; gap: 12px; margin-top: 8px; }
 .form-actions button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
-.form-actions button[type="submit"] { background: #6B4F3A; color: #fff; }
+.form-actions button[type="submit"] {
+  background: linear-gradient(135deg, #6B4F3A, #7d5e4a);
+  color: #fff;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+.form-actions button[type="submit"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(107,79,58,0.3);
+}
 .form-actions button.cancel { background: #eee; color: #333; }
 </style>

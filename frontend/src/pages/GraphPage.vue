@@ -132,12 +132,17 @@ onBeforeUnmount(() => { network?.destroy() })
   gap: 8px;
 }
 .toolbar button {
-  padding: 6px 12px;
+  padding: 8px 14px;
   background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid #e8e0d5;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 13px;
+  transition: all 0.2s ease;
+}
+.toolbar button:hover {
+  border-color: #9C5A2C;
+  color: #9C5A2C;
 }
 .legend {
   position: absolute;
@@ -156,7 +161,8 @@ onBeforeUnmount(() => { network?.destroy() })
 .side-panel {
   width: 300px;
   background: #fff;
-  border-left: 1px solid #eee;
+  border-left: 1px solid #f0ebe3;
+  border-radius: 12px 0 0 12px;
   padding: 24px;
   overflow-y: auto;
 }

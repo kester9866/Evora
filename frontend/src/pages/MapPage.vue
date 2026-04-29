@@ -616,7 +616,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .map-page {
   padding: 24px;
-  background: linear-gradient(135deg, #f0f4ff, #f7faff);
+  background: linear-gradient(160deg, #f5f0ea 0%, #f0ebe3 30%, #f7f3ed 60%, #faf7f2 100%);
   min-height: calc(100vh - 64px);
   font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
 }
@@ -630,10 +630,16 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fff;
-  padding: 8px 14px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(6px);
+  padding: 8px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: box-shadow 0.25s ease;
+}
+.filter-item:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
 .filter-item span { font-size: 14px; color: #555; }
 .filter-item select { border: none; outline: none; font-size: 14px; background: transparent; }
@@ -642,13 +648,17 @@ onBeforeUnmount(() => {
   gap: 0;
 }
 .level-selector button {
-  padding: 6px 12px;
-  border: 1px solid #ddd;
+  padding: 7px 14px;
+  border: 1px solid #e8e0d5;
   background: #fff;
   color: #666;
   cursor: pointer;
   font-size: 13px;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+}
+.level-selector button:hover:not(.active) {
+  color: #9C5A2C;
+  background: rgba(156,92,44,0.04);
 }
 .level-selector button:first-child {
   border-radius: 6px 0 0 6px;
@@ -666,9 +676,14 @@ onBeforeUnmount(() => {
   border: 1px solid #6B4F3A;
   background: #fff;
   color: #6B4F3A;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
+  transition: all 0.25s ease;
+}
+.back-btn:hover {
+  background: #6B4F3A;
+  color: #fff;
 }
 .reset-view-btn {
   padding: 8px 16px;
@@ -687,9 +702,13 @@ onBeforeUnmount(() => {
 .main { display: flex; gap: 20px; }
 .map-card, .list-card {
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-  padding: 16px;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  padding: 20px;
+  transition: box-shadow 0.3s ease;
+}
+.map-card:hover, .list-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
 }
 .map-card { flex: 7; }
 .map-container { width: 100%; height: 580px; }
@@ -698,33 +717,43 @@ onBeforeUnmount(() => {
 .list-card ul { padding: 0; margin: 0; list-style: none; overflow-y: auto; }
 .list-card li {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 0; border-bottom: 1px solid #eee;
-  transition: background 0.3s;
+  padding: 12px 10px; border-bottom: 1px solid #f0ebe3;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+.list-card li:hover {
+  background: rgba(107,79,58,0.03);
 }
 .list-card li.highlighted {
-  background: #fff3e0;
-  margin: 0 -8px;
-  padding-left: 8px;
-  padding-right: 8px;
-  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(156,92,44,0.08), rgba(107,79,58,0.06));
+  margin: 0 -6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 10px;
+  border-left: 3px solid #9C5A2C;
 }
 .bridge-info { display: flex; flex-direction: column; }
 .name-row { display: flex; align-items: center; gap: 8px; }
 .name { font-weight: 500; color: #222; }
 .badge-3d {
   font-size: 10px;
-  background: #9C5A2C;
+  background: linear-gradient(135deg, #9C5A2C, #6B4F3A);
   color: #fff;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  border-radius: 8px;
   cursor: pointer;
 }
 .meta { font-size: 12px; color: #888; }
 .location { font-size: 12px; color: #aaa; }
 button {
-  padding: 4px 10px; border: none;
+  padding: 6px 12px; border: none;
   background: linear-gradient(135deg, #8A9A9A, #a0aaaa);
-  color: #fff; border-radius: 6px; cursor: pointer; font-size: 12px;
+  color: #fff; border-radius: 8px; cursor: pointer; font-size: 12px;
+  transition: all 0.2s ease;
+}
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
 }
 .empty { text-align: center; margin-top: 20px; color: #999; }
 .modal {
@@ -733,10 +762,13 @@ button {
   z-index: 200;
 }
 .modal-content {
-  width: 500px; background: #fff; border-radius: 12px; padding: 24px;
+  width: 500px; background: #fff; border-radius: 18px; padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
 }
 .modal-content h2 { margin: 0 0 8px; }
 .fields { margin: 16px 0; }
 .field { font-size: 14px; color: #555; margin-bottom: 4px; }
 .modal-actions { display: flex; gap: 12px; margin-top: 16px; }
+.modal-actions button { padding: 8px 20px; border-radius: 10px; transition: all 0.2s ease; }
+.modal-actions button:hover { transform: translateY(-1px); }
 </style>

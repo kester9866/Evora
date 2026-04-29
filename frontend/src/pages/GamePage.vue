@@ -173,13 +173,18 @@ onBeforeUnmount(() => {
 }
 .hint-btn {
   margin-top: 16px;
-  padding: 10px 24px;
-  border: 1px solid #ffc107;
-  background: #fff8e1;
-  color: #8b6914;
-  border-radius: 8px;
+  padding: 12px 28px;
+  border: 1px solid rgba(156,92,44,0.2);
+  background: linear-gradient(135deg, rgba(156,92,44,0.06), rgba(107,79,58,0.04));
+  color: #6B4F3A;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 15px;
+  transition: all 0.25s ease;
+}
+.hint-btn:hover {
+  background: linear-gradient(135deg, rgba(156,92,44,0.12), rgba(107,79,58,0.08));
+  border-color: #9C5A2C;
 }
 .hint-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .completion-popup {

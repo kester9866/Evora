@@ -77,7 +77,14 @@ h1 { margin: 0 0 24px; font-size: 24px; color: #333; }
   cursor: pointer;
   transition: transform 0.2s;
 }
-.product-card:hover { transform: translateY(-4px); }
+.product-card {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+}
 .product-img {
   width: 100%;
   height: 200px;

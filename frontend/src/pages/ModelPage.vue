@@ -139,6 +139,8 @@ onBeforeUnmount(() => {
   border: 1px solid #6B4F3A;
   background: #fff;
   color: #6B4F3A;
+  border-radius: 10px;
+  transition: all 0.25s ease;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
