@@ -19,7 +19,7 @@
         <button :class="{ active: mapLevel === 'province' }" @click="switchLevel('province')">省级</button>
         <button :class="{ active: mapLevel === 'city' }" @click="switchLevel('city')">市级</button>
       </div>
-      <button v-if="highlightedBridge" class="back-btn" @click="clearHighlight">← 返回总览</button>
+      <button v-if="showResetBtn" class="reset-view-btn" @click="resetView">🏠 恢复默认视角</button>
     </div>
 
     <div class="main">
@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import * as echarts from 'echarts'
 import chinaJson from '../data/china.json'
 import { getBridges } from '../api/bridges.js'
@@ -105,6 +105,12 @@ const provinceData = ref([])
 const showDetail = ref(false)
 const detailBridge = ref(null)
 const highlightedBridge = ref(null)
+const hasUserZoomed = ref(false)
+let isProgrammaticUpdate = false
+
+const showResetBtn = computed(() => {
+  return hasUserZoomed.value || !!selectedProvince.value || !!highlightedBridge.value
+})
 
 const mapLevel = ref('province')
 
@@ -112,7 +118,9 @@ function switchLevel(level) {
   if (mapLevel.value === level) return
   mapLevel.value = level
   if (chartInstance) {
+    isProgrammaticUpdate = true
     chartInstance.setOption(buildChartOption(selectedProvince.value), false)
+    setTimeout(() => { isProgrammaticUpdate = false }, 300)
   }
 }
 
@@ -521,7 +529,9 @@ function buildHighlightOption(targetBridge) {
 async function highlightCity(bridge) {
   highlightedBridge.value = bridge
   if (!chartInstance) return
+  isProgrammaticUpdate = true
   chartInstance.setOption(buildHighlightOption(bridge), false)
+  setTimeout(() => { isProgrammaticUpdate = false }, 300)
 }
 
 function clearHighlight() {
@@ -529,6 +539,13 @@ function clearHighlight() {
   if (chartInstance) {
     chartInstance.setOption(buildChartOption(selectedProvince.value), false)
   }
+}
+
+async function resetView() {
+  selectedProvince.value = ''
+  highlightedBridge.value = null
+  await Promise.all([fetchBridges(), fetchProvinceData()])
+  renderChart()
 }
 
 async function onProvinceClick(params) {
@@ -552,9 +569,15 @@ function renderChart() {
   if (!chartInstance) {
     chartInstance = echarts.init(chartRef.value)
     chartInstance.on('click', onProvinceClick)
+    chartInstance.on('georoam', () => {
+      if (!isProgrammaticUpdate) hasUserZoomed.value = true
+    })
   }
   highlightedBridge.value = null
+  hasUserZoomed.value = false
+  isProgrammaticUpdate = true
   chartInstance.setOption(buildChartOption(selectedProvince.value), true)
+  setTimeout(() => { isProgrammaticUpdate = false }, 300)
 }
 
 async function onFilterChange() {
@@ -646,6 +669,20 @@ onBeforeUnmount(() => {
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+}
+.reset-view-btn {
+  padding: 8px 16px;
+  border: 1px solid #8A9A9A;
+  background: #fff;
+  color: #8A9A9A;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.reset-view-btn:hover {
+  background: #8A9A9A;
+  color: #fff;
 }
 .main { display: flex; gap: 20px; }
 .map-card, .list-card {
