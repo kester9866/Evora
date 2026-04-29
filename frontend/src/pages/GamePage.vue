@@ -211,7 +211,7 @@ onBeforeUnmount(() => {
   color: #999;
 }
 .close-btn {
-  background: #8b4513;
+  background: #6B4F3A;
   border: none;
   color: #fff;
 }

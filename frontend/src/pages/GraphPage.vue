@@ -165,7 +165,7 @@ onBeforeUnmount(() => { network?.destroy() })
 .panel-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .panel-actions button {
   padding: 8px 16px;
-  background: #8b4513;
+  background: #6B4F3A;
   color: #fff;
   border: none;
   border-radius: 6px;

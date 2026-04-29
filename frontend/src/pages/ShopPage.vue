@@ -86,7 +86,7 @@ h1 { margin: 0 0 24px; font-size: 24px; color: #333; }
 }
 .product-info { padding: 16px; }
 .product-info h3 { margin: 0 0 4px; font-size: 16px; }
-.price { color: #8b4513; font-weight: 600; font-size: 18px; margin: 0; }
+.price { color: #9C5A2C; font-weight: 600; font-size: 18px; margin: 0; }
 .skeleton-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -120,11 +120,11 @@ h1 { margin: 0 0 24px; font-size: 24px; color: #333; }
 }
 .modal-img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 16px; }
 .modal-content h2 { margin: 0 0 8px; font-size: 20px; }
-.modal-price { font-size: 22px; color: #8b4513; font-weight: 700; margin: 0 0 12px; }
+.modal-price { font-size: 22px; color: #9C5A2C; font-weight: 700; margin: 0 0 12px; }
 .modal-desc { font-size: 14px; color: #555; line-height: 1.6; }
 .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
 .buy-btn {
-  padding: 10px 28px; background: #8b4513; color: #fff; border: none;
+  padding: 10px 28px; background: #6B4F3A; color: #fff; border: none;
   border-radius: 8px; cursor: pointer; font-size: 15px;
 }
 .close-btn {

@@ -44,7 +44,7 @@ import AiAssistant from '../components/AiAssistant.vue'
 .brand {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #8b4513;
+  color: #9C5A2C;
   text-decoration: none;
 }
 .nav-links {
@@ -59,7 +59,7 @@ import AiAssistant from '../components/AiAssistant.vue'
 }
 .nav-links a:hover,
 .nav-links a.router-link-active {
-  color: #8b4513;
+  color: #9C5A2C;
 }
 .page-content {
   flex: 1;

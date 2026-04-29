@@ -282,7 +282,7 @@ function buildChartOption(selectedProvince) {
       left: 'left',
       bottom: '5%',
       text: ['多', '少'],
-      inRange: { color: ['#f0f4ff', '#bdd5ff', '#6ea8fe', '#0d6efd', '#084298'] },
+      inRange: { color: ['#f5f0ea', '#d4a574', '#9C5A2C', '#6B4F3A', '#4a3020'] },
       calculable: false
     },
     geo: {
@@ -307,12 +307,12 @@ function buildChartOption(selectedProvince) {
         data: mapData,
         itemStyle: {
           areaColor: 'transparent',
-          borderColor: '#c8b898',
+          borderColor: '#8A9A9A',
           borderWidth: 1
         },
         emphasis: {
           itemStyle: {
-            areaColor: '#ffd599',
+            areaColor: '#d4a574',
             borderWidth: 1.5
           }
         }
@@ -326,7 +326,7 @@ function buildChartOption(selectedProvince) {
         data: scatterData,
         symbolSize: 10,
         itemStyle: {
-          color: '#8b4513',
+          color: '#9C5A2C',
           borderColor: '#fff',
           borderWidth: 2
         },
@@ -358,7 +358,7 @@ function buildChartOption(selectedProvince) {
           position: 'right',
           fontSize: 14,
           fontWeight: 'bold',
-          color: '#8b4513'
+          color: '#6B4F3A'
         }
       }
     ]
@@ -438,7 +438,7 @@ function buildHighlightOption(targetBridge) {
       left: 'left',
       bottom: '5%',
       text: ['多', '少'],
-      inRange: { color: ['#f0f4ff', '#bdd5ff', '#6ea8fe', '#0d6efd', '#084298'] },
+      inRange: { color: ['#f5f0ea', '#d4a574', '#9C5A2C', '#6B4F3A', '#4a3020'] },
       calculable: false
     },
     geo: {
@@ -463,12 +463,12 @@ function buildHighlightOption(targetBridge) {
         data: mapData,
         itemStyle: {
           areaColor: 'transparent',
-          borderColor: '#c8b898',
+          borderColor: '#8A9A9A',
           borderWidth: 1
         },
         emphasis: {
           itemStyle: {
-            areaColor: '#ffd599',
+            areaColor: '#d4a574',
             borderWidth: 1.5
           }
         }
@@ -511,7 +511,7 @@ function buildHighlightOption(targetBridge) {
           position: 'right',
           fontSize: 14,
           fontWeight: 'bold',
-          color: '#8b4513'
+          color: '#6B4F3A'
         }
       }
     ]
@@ -634,15 +634,15 @@ onBeforeUnmount(() => {
   border-radius: 0 6px 6px 0;
 }
 .level-selector button.active {
-  background: #8b4513;
+  background: #6B4F3A;
   color: #fff;
-  border-color: #8b4513;
+  border-color: #9C5A2C;
 }
 .back-btn {
   padding: 8px 16px;
-  border: 1px solid #8b4513;
+  border: 1px solid #6B4F3A;
   background: #fff;
-  color: #8b4513;
+  color: #6B4F3A;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
@@ -676,7 +676,7 @@ onBeforeUnmount(() => {
 .name { font-weight: 500; color: #222; }
 .badge-3d {
   font-size: 10px;
-  background: #8b4513;
+  background: #9C5A2C;
   color: #fff;
   padding: 2px 6px;
   border-radius: 4px;
@@ -686,7 +686,7 @@ onBeforeUnmount(() => {
 .location { font-size: 12px; color: #aaa; }
 button {
   padding: 4px 10px; border: none;
-  background: linear-gradient(135deg, #409eff, #66b1ff);
+  background: linear-gradient(135deg, #8A9A9A, #a0aaaa);
   color: #fff; border-radius: 6px; cursor: pointer; font-size: 12px;
 }
 .empty { text-align: center; margin-top: 20px; color: #999; }

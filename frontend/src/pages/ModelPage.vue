@@ -136,9 +136,9 @@ onBeforeUnmount(() => {
 }
 .back-btn {
   padding: 8px 16px;
-  border: 1px solid #8b4513;
+  border: 1px solid #6B4F3A;
   background: #fff;
-  color: #8b4513;
+  color: #6B4F3A;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
@@ -161,7 +161,7 @@ onBeforeUnmount(() => {
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   font-size: 16px;
-  color: #8b4513;
+  color: #9C5A2C;
 }
 .error-state {
   position: absolute;

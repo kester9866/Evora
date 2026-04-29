@@ -216,7 +216,7 @@ const updateChart = () => {
       bottom: "5%",
       text: ["多", "少"],
       inRange: {
-        color: ["#e6f4ff", "#91caff", "#409eff", "#003a8c"]
+        color: ["#f5f0ea", "#d4a574", "#9C5A2C", "#4a3020"]
       },
       calculable: false
     },
@@ -385,7 +385,7 @@ onBeforeUnmount(() => {
 button {
   padding: 4px 10px;
   border: none;
-  background: linear-gradient(135deg, #409eff, #66b1ff);
+  background: linear-gradient(135deg, #8A9A9A, #a0aaaa);
   color: white;
   border-radius: 6px;
   cursor: pointer;

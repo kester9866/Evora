@@ -53,7 +53,7 @@ onMounted(async () => {
 h3 {
   margin: 0 0 8px;
   font-size: 14px;
-  color: #8b4513;
+  color: #9C5A2C;
 }
 .otd-description {
   font-size: 13px;

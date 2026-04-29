@@ -56,7 +56,7 @@ async function doLogin() {
   flex-direction: column;
   gap: 16px;
 }
-h1 { margin: 0 0 8px; font-size: 20px; text-align: center; color: #8b4513; }
+h1 { margin: 0 0 8px; font-size: 20px; text-align: center; color: #9C5A2C; }
 .error { color: #e74c3c; font-size: 13px; text-align: center; }
 input {
   padding: 12px;
@@ -65,10 +65,10 @@ input {
   font-size: 14px;
   outline: none;
 }
-input:focus { border-color: #8b4513; }
+input:focus { border-color: #9C5A2C; }
 button {
   padding: 12px;
-  background: #8b4513;
+  background: #6B4F3A;
   color: #fff;
   border: none;
   border-radius: 8px;

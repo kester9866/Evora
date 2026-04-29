@@ -293,12 +293,12 @@ watch(bridgePage, () => { fetchBridges() })
   cursor: pointer;
   font-size: 14px;
 }
-.tabs button.active { background: #8b4513; color: #fff; border-color: #8b4513; }
+.tabs button.active { background: #6B4F3A; color: #fff; border-color: #9C5A2C; }
 .tab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .tab-header h2 { margin: 0; font-size: 18px; }
 .add-btn {
   padding: 8px 16px;
-  background: #8b4513;
+  background: #6B4F3A;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -309,7 +309,7 @@ table { width: 100%; border-collapse: collapse; background: #fff; border-radius:
 th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
 th { background: #f5f0ea; font-weight: 600; }
 .actions { display: flex; gap: 8px; }
-.actions button { padding: 4px 10px; background: #409eff; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.actions button { padding: 4px 10px; background: #8A9A9A; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
 .actions button.delete { background: #e74c3c; }
 .pagination { display: flex; align-items: center; gap: 12px; margin-top: 16px; justify-content: center; }
 .pagination button { padding: 6px 14px; background: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
@@ -336,6 +336,6 @@ th { background: #f5f0ea; font-weight: 600; }
 .checkbox-label { flex-direction: row !important; align-items: center; gap: 8px; }
 .form-actions { display: flex; gap: 12px; margin-top: 8px; }
 .form-actions button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
-.form-actions button[type="submit"] { background: #8b4513; color: #fff; }
+.form-actions button[type="submit"] { background: #6B4F3A; color: #fff; }
 .form-actions button.cancel { background: #eee; color: #333; }
 </style>

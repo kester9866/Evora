@@ -198,19 +198,19 @@ async function send() {
 }
 .toggle-btn {
   padding: 10px 20px;
-  background: #8b4513;
+  background: #6B4F3A;
   color: #fff;
   border: none;
   border-radius: 24px;
   cursor: grab;
   font-size: 14px;
-  box-shadow: 0 4px 16px rgba(139,69,19,0.3);
+  box-shadow: 0 4px 16px rgba(107,79,58,0.3);
   transition: transform 0.2s, box-shadow 0.2s;
   user-select: none;
   -webkit-user-select: none;
 }
 .toggle-btn:active { cursor: grabbing; }
-.toggle-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(139,69,19,0.4); }
+.toggle-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(107,79,58,0.4); }
 .chat-panel {
   position: absolute;
   bottom: 60px;
@@ -229,7 +229,7 @@ async function send() {
   justify-content: space-between;
   align-items: center;
   padding: 14px 18px;
-  background: #8b4513;
+  background: #6B4F3A;
   color: #fff;
   font-size: 15px;
   font-weight: 500;
@@ -260,7 +260,7 @@ async function send() {
   line-height: 1.5;
 }
 .message.user .bubble {
-  background: #8b4513;
+  background: #6B4F3A;
   color: #fff;
   border-bottom-right-radius: 4px;
 }
@@ -275,7 +275,7 @@ async function send() {
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 .bubble :deep(p) { margin: 0 0 6px; }
 .bubble :deep(p:last-child) { margin-bottom: 0; }
-.bubble :deep(strong) { color: #8b4513; }
+.bubble :deep(strong) { color: #9C5A2C; }
 .bubble :deep(h2), .bubble :deep(h3), .bubble :deep(h4) { margin: 8px 0 4px; color: #5a2d0c; }
 .bubble :deep(ul), .bubble :deep(ol) { margin: 4px 0; padding-left: 20px; }
 .bubble :deep(li) { margin-bottom: 2px; }
@@ -301,11 +301,11 @@ async function send() {
   color: inherit;
 }
 .bubble :deep(a) {
-  color: #8b4513;
+  color: #9C5A2C;
   text-decoration: underline;
 }
 .bubble :deep(blockquote) {
-  border-left: 3px solid #8b4513;
+  border-left: 3px solid #6B4F3A;
   padding-left: 12px;
   margin: 8px 0;
   color: #666;
@@ -327,7 +327,7 @@ async function send() {
 .input-area input:disabled { background: #f5f5f5; }
 .input-area button {
   padding: 10px 18px;
-  background: #8b4513;
+  background: #6B4F3A;
   color: #fff;
   border: none;
   border-radius: 20px;

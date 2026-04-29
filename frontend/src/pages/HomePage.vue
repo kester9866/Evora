@@ -205,7 +205,7 @@ onMounted(() => {
   transition: background 0.3s;
 }
 .progress span.active {
-  background: #8b4513;
+  background: #6B4F3A;
   box-shadow: 0 0 0 4px rgba(139, 69, 19, 0.15);
 }
 
@@ -293,7 +293,7 @@ p {
 .cta {
   margin-top: 18px;
   padding: 10px 24px;
-  background: #8b4513;
+  background: #6B4F3A;
   color: #fff;
   border: none;
   border-radius: 6px;
