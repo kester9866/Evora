@@ -1,0 +1,15 @@
+[Unit]
+Description=Evora Backend API
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/evora/backend
+ExecStart=/opt/evora/backend/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=5
+EnvironmentFile=/opt/evora/backend/.env
+
+[Install]
+WantedBy=multi-user.target

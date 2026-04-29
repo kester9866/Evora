@@ -1,4 +1,28 @@
 node_modules/
 dist/
-.env
 .DS_Store
+openspec/
+
+# claude
+.claude/
+
+# env
+.env
+**/.env
+
+# cache
+__pycache__/
+*.pyc
+*.pyo
+.cache/
+*.swp
+*.swo
+
+# db
+backend/evora.db
+backend/evora.db-shm
+backend/evora.db-wal
+
+backend/chroma_data/
+frontend/dist/
+.venv/
