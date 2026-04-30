@@ -14,7 +14,7 @@
 
     <div v-else class="product-grid">
       <div v-for="product in products" :key="product.id" class="product-card" @click="selected = product">
-        <img :src="product.image_url" :alt="product.name_zh" class="product-img" />
+        <img :src="resolveAssetUrl(product.image_url)" :alt="product.name_zh" class="product-img" />
         <div class="product-info">
           <h3>{{ product.name_zh }}</h3>
           <p class="price">¥{{ product.price }}</p>
@@ -24,7 +24,7 @@
 
     <div v-if="selected" class="modal" @click.self="selected = null">
       <div class="modal-content">
-        <img :src="selected.image_url" :alt="selected.name_zh" class="modal-img" />
+        <img :src="resolveAssetUrl(selected.image_url)" :alt="selected.name_zh" class="modal-img" />
         <h2>{{ selected.name_zh }}</h2>
         <p class="modal-price">¥{{ selected.price }}</p>
         <p class="modal-desc" v-if="selected.description">{{ selected.description }}</p>
@@ -40,6 +40,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getProducts } from '../api/shop.js'
+import { resolveAssetUrl } from '../utils/asset'
 
 const products = ref([])
 const loading = ref(true)

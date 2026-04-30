@@ -1,10 +1,34 @@
 from fastapi import APIRouter, Depends, HTTPException, Header
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from app.db import get_db
 from app.auth import verify_password, create_token, verify_token
 from app.chroma import upsert_chunk, delete_chunk as chroma_delete
+import re
 
 router = APIRouter()
+
+# Only allow safe characters in relative paths: alphanumeric, underscore, dash, dot, slash
+_SAFE_PATH_RE = re.compile(r'^[a-zA-Z0-9_\-./]+$')
+
+
+def validate_asset_url(v: str | None) -> str | None:
+    """Validate an asset URL. Accepts absolute http(s) URLs and ./ relative paths.
+    Rejects paths with .. traversal or dangerous characters."""
+    if v is None or v.strip() == '':
+        return v
+    trimmed = v.strip()
+    # Absolute URLs pass through
+    if trimmed.startswith('http://') or trimmed.startswith('https://'):
+        return trimmed
+    # Relative paths must start with ./ and contain no ..
+    if trimmed.startswith('./'):
+        if '..' in trimmed:
+            raise ValueError('相对路径不允许包含 ".." 向上穿越字符')
+        if not _SAFE_PATH_RE.match(trimmed):
+            raise ValueError('相对路径包含非法字符，仅允许字母、数字、下划线、短横线、点和斜杠')
+        return trimmed
+    # Other formats pass through (could be a filename, etc.)
+    return trimmed
 
 
 class LoginRequest(BaseModel):
@@ -31,6 +55,11 @@ class BridgeCreate(BaseModel):
     model_url: str | None = None
     image_url: str | None = None
 
+    @field_validator('model_url', 'image_url')
+    @classmethod
+    def check_url(cls, v: str | None) -> str | None:
+        return validate_asset_url(v)
+
 
 class ProductCreate(BaseModel):
     name_zh: str
@@ -38,6 +67,11 @@ class ProductCreate(BaseModel):
     description: str | None = None
     image_url: str | None = None
     buy_link: str | None = None
+
+    @field_validator('image_url')
+    @classmethod
+    def check_url(cls, v: str | None) -> str | None:
+        return validate_asset_url(v)
 
 
 class ChunkCreate(BaseModel):

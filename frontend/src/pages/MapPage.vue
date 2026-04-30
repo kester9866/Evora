@@ -1,6 +1,13 @@
 <template>
   <div class="map-page">
     <div class="filters">
+      <div class="filter-item search-item">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input v-model="searchQuery" placeholder="搜索桥梁名称、地点..." @input="onSearchInput" />
+        <button v-if="searchQuery" class="clear-btn" @click="searchQuery = ''">✕</button>
+      </div>
       <div class="filter-item">
         <span>朝代</span>
         <select v-model="selectedDynasty" @change="onFilterChange">
@@ -29,17 +36,18 @@
       </div>
 
       <div class="list-card">
-        <div class="card-title">桥梁列表（{{ bridges.length }}）</div>
+        <div class="card-title">桥梁列表（{{ filteredBridges.length }}）</div>
+        <div class="list-hint">点击 <span class="badge-3d inline">3D模型</span> 标签可观摩桥梁三维展示</div>
         <ul>
           <li
-            v-for="item in bridges"
+            v-for="item in filteredBridges"
             :key="item.id || item.name_zh"
             :class="{ highlighted: highlightedBridge?.id === item.id }"
           >
             <div class="bridge-info">
               <div class="name-row">
                 <span class="name">{{ item.name_zh }}</span>
-                <span v-if="item.model_url" class="badge-3d" @click.stop="$router.push(`/model/${item.id}`)">3D模型</span>
+                <span v-if="item.has_model && item.model_url" class="badge-3d" @click.stop="$router.push(`/model/${item.id}`)">3D模型</span>
               </div>
               <span class="meta">{{ item.dynasty }} · {{ item.type }}</span>
               <span class="location">{{ item.province }}-{{ item.city }}</span>
@@ -47,7 +55,7 @@
             <button @click="highlightCity(item)">定位</button>
           </li>
         </ul>
-        <div v-if="bridges.length === 0" class="empty">暂无数据</div>
+        <div v-if="filteredBridges.length === 0" class="empty">{{ searchQuery ? '未找到匹配的桥梁' : '暂无数据' }}</div>
       </div>
     </div>
 
@@ -61,7 +69,7 @@
           <div v-if="detailBridge.width_m" class="field">宽度：{{ detailBridge.width_m }}m</div>
         </div>
         <div class="modal-actions">
-          <button v-if="detailBridge.model_url" @click="$router.push(`/model/${detailBridge.id}`)">查看3D模型</button>
+          <button v-if="detailBridge.has_model && detailBridge.model_url" @click="$router.push(`/model/${detailBridge.id}`)">查看3D模型</button>
           <button @click="showDetail = false">关闭</button>
         </div>
       </div>
@@ -71,10 +79,13 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
 import * as echarts from 'echarts'
 import chinaJson from '../data/china.json'
 import { getBridges } from '../api/bridges.js'
 import { getProvinces } from '../api/map.js'
+
+const route = useRoute()
 
 echarts.registerMap('china', chinaJson)
 
@@ -102,6 +113,16 @@ const selectedType = ref('')
 const selectedProvince = ref('')
 const bridges = ref([])
 const provinceData = ref([])
+const searchQuery = ref('')
+
+const filteredBridges = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase()
+  if (!q) return bridges.value
+  return bridges.value.filter(b => {
+    return ['name_zh', 'name_en', 'dynasty', 'type', 'province', 'city', 'district', 'description', 'material']
+      .some(key => (b[key] || '').toString().toLowerCase().includes(q))
+  })
+})
 const showDetail = ref(false)
 const detailBridge = ref(null)
 const highlightedBridge = ref(null)
@@ -188,7 +209,7 @@ function parseCoords(bridge) {
 
 async function fetchBridges() {
   try {
-    const params = {}
+    const params = { limit: 200 }
     if (selectedDynasty.value) params.dynasty = selectedDynasty.value
     if (selectedType.value) params.type = selectedType.value
     if (selectedProvince.value) params.province = selectedProvince.value
@@ -232,7 +253,7 @@ function buildChartOption(selectedProvince) {
   // City and district-level bridge counts for tooltip display
   const cityCountMap = {}
   const districtCountMap = {}
-  bridges.value.forEach(b => {
+  filteredBridges.value.forEach(b => {
     if (b.city) {
       const ckey = normalizeCityName(b.city)
       cityCountMap[ckey] = (cityCountMap[ckey] || 0) + 1
@@ -244,7 +265,7 @@ function buildChartOption(selectedProvince) {
   })
 
   const scatterData = []
-  bridges.value.forEach(b => {
+  filteredBridges.value.forEach(b => {
     const coords = parseCoords(b)
     if (coords) {
       scatterData.push({
@@ -385,7 +406,7 @@ function buildHighlightOption(targetBridge) {
   // City and district-level bridge counts for tooltip display
   const cityCountMap = {}
   const districtCountMap = {}
-  bridges.value.forEach(b => {
+  filteredBridges.value.forEach(b => {
     if (b.city) {
       const ckey = normalizeCityName(b.city)
       cityCountMap[ckey] = (cityCountMap[ckey] || 0) + 1
@@ -396,7 +417,7 @@ function buildHighlightOption(targetBridge) {
     }
   })
 
-  const scatterData = bridges.value.map(b => {
+  const scatterData = filteredBridges.value.map(b => {
     const c = parseCoords(b)
     return c ? {
       name: b.name_zh,
@@ -580,6 +601,10 @@ function renderChart() {
   setTimeout(() => { isProgrammaticUpdate = false }, 300)
 }
 
+function onSearchInput() {
+  renderChart()
+}
+
 async function onFilterChange() {
   selectedProvince.value = ''
   highlightedBridge.value = null
@@ -601,6 +626,8 @@ function goDetail(item) {
 const handleResize = () => { chartInstance?.resize() }
 
 onMounted(async () => {
+  const q = route.query.q
+  if (q) searchQuery.value = q
   await Promise.all([fetchBridges(), fetchProvinceData(), loadFullMap()])
   renderChart()
   window.addEventListener('resize', handleResize)
@@ -643,6 +670,31 @@ onBeforeUnmount(() => {
 }
 .filter-item span { font-size: 14px; color: #555; }
 .filter-item select { border: none; outline: none; font-size: 14px; background: transparent; }
+.filter-item.search-item {
+  flex: 1;
+  max-width: 320px;
+  padding: 4px 12px;
+}
+.filter-item.search-item .search-icon {
+  width: 16px; height: 16px;
+  color: #A09080;
+  flex-shrink: 0;
+}
+.filter-item.search-item input {
+  flex: 1;
+  border: none; outline: none;
+  background: transparent;
+  font-size: 14px; color: #3d3020;
+  font-family: inherit;
+  min-width: 0;
+}
+.filter-item.search-item input::placeholder { color: #B0A090; font-size: 13px; }
+.filter-item.search-item .clear-btn {
+  background: none; border: none; color: #999;
+  cursor: pointer; font-size: 14px; padding: 0 2px;
+  line-height: 1;
+}
+.filter-item.search-item .clear-btn:hover { color: #6B4F3A; }
 .level-selector {
   padding: 4px;
   gap: 0;
@@ -713,7 +765,19 @@ onBeforeUnmount(() => {
 .map-card { flex: 7; }
 .map-container { width: 100%; height: 580px; }
 .list-card { flex: 3; max-height: 612px; display: flex; flex-direction: column; }
-.card-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.card-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.list-hint {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 8px;
+}
+.list-hint .badge-3d.inline {
+  display: inline;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: default;
+}
 .list-card ul { padding: 0; margin: 0; list-style: none; overflow-y: auto; }
 .list-card li {
   display: flex; justify-content: space-between; align-items: center;

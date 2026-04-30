@@ -60,11 +60,11 @@ async def init_db():
 
         CREATE TABLE IF NOT EXISTS knowledge_chunks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            bridge_id INTEGER NOT NULL,
+            bridge_id INTEGER,
             text TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (bridge_id) REFERENCES bridges(id) ON DELETE CASCADE
+            FOREIGN KEY (bridge_id) REFERENCES bridges(id) ON DELETE SET NULL
         );
     """)
     await db.commit()

@@ -12,7 +12,8 @@ const routes = [
       { path: 'model/:id', name: 'model', component: () => import('../pages/ModelPage.vue') },
       { path: 'game', name: 'game', component: () => import('../pages/GamePage.vue') },
       { path: 'shop', name: 'shop', component: () => import('../pages/ShopPage.vue') },
-      { path: 'graph', name: 'graph', component: () => import('../pages/GraphPage.vue') }
+      { path: 'graph', name: 'graph', component: () => import('../pages/GraphPage.vue') },
+      { path: 'knowledge', name: 'knowledge', component: () => import('../pages/KnowledgeSearch.vue') }
     ]
   },
   {

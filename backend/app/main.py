@@ -1,6 +1,8 @@
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import bridges, map, home, shop, game, kg, chat, admin
+from fastapi.staticfiles import StaticFiles
+from app.routers import bridges, map, home, shop, game, kg, chat, admin, knowledge
 from app.db import init_db
 from app.seed import seed_if_empty
 
@@ -22,6 +24,12 @@ app.include_router(game.router, prefix="/api")
 app.include_router(kg.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(admin.router, prefix="/api")
+app.include_router(knowledge.router, prefix="/api")
+
+# Mount static files directory (under /api so it works through the Vite proxy and nginx)
+static_dir = Path(__file__).resolve().parent.parent / "static"
+static_dir.mkdir(exist_ok=True)
+app.mount("/api/static", StaticFiles(directory=str(static_dir)), name="static")
 
 
 @app.on_event("startup")

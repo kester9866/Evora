@@ -1,6 +1,18 @@
 <template>
   <div class="graph-page">
-    <div class="graph-main">
+    <!-- Loading overlay -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-card">
+        <h2>知识图谱</h2>
+        <p>正在构建桥梁知识网络...</p>
+        <div class="progress-track">
+          <div class="progress-fill" :style="{ width: progress + '%' }"></div>
+        </div>
+        <span class="progress-text">{{ progress }}%</span>
+      </div>
+    </div>
+
+    <div v-show="!loading" class="graph-main">
       <div class="toolbar">
         <button @click="zoomIn">🔍+</button>
         <button @click="zoomOut">🔍−</button>
@@ -28,13 +40,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { Network } from 'vis-network'
 import { DataSet } from 'vis-data'
 import { getGraphData } from '../api/kg.js'
 
 const networkRef = ref(null)
 const selectedNode = ref(null)
+const loading = ref(true)
+const progress = ref(0)
 let network = null
 
 const dynasties = [
@@ -60,8 +74,29 @@ function getDynastyColor(d) {
   return dynastyColors[d] || '#95a5a6'
 }
 
+function advanceProgress(target, delay = 300) {
+  return new Promise(resolve => {
+    const start = progress.value
+    const startTime = Date.now()
+    function tick() {
+      const elapsed = Date.now() - startTime
+      const t = Math.min(elapsed / delay, 1)
+      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
+      progress.value = Math.round(start + (target - start) * eased)
+      if (t < 1) {
+        requestAnimationFrame(tick)
+      } else {
+        resolve()
+      }
+    }
+    requestAnimationFrame(tick)
+  })
+}
+
 onMounted(async () => {
   try {
+    advanceProgress(15, 200)
+
     const data = await getGraphData()
     const nodesData = (data.nodes || []).map(n => ({
       id: n.id,
@@ -80,13 +115,20 @@ onMounted(async () => {
       color: { color: '#bdc3c7' }
     }))
 
+    await advanceProgress(45, 250)
+
     const nodes = new DataSet(nodesData)
     const edges = new DataSet(edgesData)
+
+    await nextTick()
+    await advanceProgress(60, 200)
 
     network = new Network(networkRef.value, { nodes, edges }, {
       physics: { solver: 'forceAtlas2Based' },
       interaction: { hover: true }
     })
+
+    await advanceProgress(80, 250)
 
     network.on('click', (params) => {
       if (params.nodes.length > 0) {
@@ -97,8 +139,18 @@ onMounted(async () => {
         selectedNode.value = null
       }
     })
+
+    // Wait for physics stabilization then finish
+    await new Promise(resolve => {
+      network.once('stabilizationIterationsDone', resolve)
+      setTimeout(resolve, 1500)
+    })
+
+    await advanceProgress(100, 200)
+
+    loading.value = false
   } catch {
-    // No data available
+    loading.value = false
   }
 })
 
@@ -114,7 +166,62 @@ onBeforeUnmount(() => { network?.destroy() })
   display: flex;
   height: calc(100vh - 64px);
   font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  position: relative;
 }
+
+/* ===== Loading overlay ===== */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #f5f0ea 0%, #f0ebe3 30%, #f7f3ed 60%, #faf7f2 100%);
+  z-index: 20;
+}
+.loading-card {
+  text-align: center;
+  padding: 48px 56px;
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(156,92,44,0.08);
+  box-shadow: 0 8px 40px rgba(107,79,58,0.06);
+  min-width: 360px;
+}
+.loading-card h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  color: #3d3020;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.loading-card p {
+  margin: 0 0 28px;
+  font-size: 14px;
+  color: #8A7A6A;
+}
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(107,79,58,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6B4F3A, #9C5A2C);
+  border-radius: 3px;
+  transition: width 0.15s linear;
+}
+.progress-text {
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #A09080;
+}
+
+/* ===== Graph main ===== */
 .graph-main {
   flex: 1;
   position: relative;
@@ -179,4 +286,12 @@ onBeforeUnmount(() => { network?.destroy() })
   font-size: 14px;
 }
 .close-panel { background: #eee !important; color: #333 !important; }
+
+@media (max-width: 768px) {
+  .loading-card {
+    min-width: auto;
+    margin: 0 24px;
+    padding: 32px 36px;
+  }
+}
 </style>

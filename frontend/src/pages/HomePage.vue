@@ -23,7 +23,7 @@
           </svg>
           <input
             v-model="searchText"
-            placeholder="搜索古桥、工艺、朝代..."
+            placeholder="搜索古桥 · 技艺 · 文化 · 朝代 ..."
             @keyup.enter="onSearch"
           />
         </div>
@@ -86,7 +86,7 @@ const triggers = []
 
 function onSearch() {
   const q = searchText.value.trim()
-  if (q) router.push(`/map?q=${encodeURIComponent(q)}`)
+  if (q) router.push(`/knowledge?q=${encodeURIComponent(q)}`)
 }
 
 // === Background images ===

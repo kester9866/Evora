@@ -10,7 +10,14 @@
     <div v-if="tab === 'bridges'">
       <div class="tab-header">
         <h2>桥梁管理</h2>
-        <button class="add-btn" @click="openBridgeForm()">新增桥梁</button>
+        <div class="tab-header-right">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input v-model="bridgeSearch" placeholder="搜索名称、朝代、地点..." />
+            <button v-if="bridgeSearch" class="clear-btn" @click="bridgeSearch = ''">✕</button>
+          </div>
+          <button class="add-btn" @click="openBridgeForm()">新增桥梁</button>
+        </div>
       </div>
       <table>
         <thead>
@@ -19,7 +26,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="b in bridges" :key="b.id">
+          <tr v-for="b in filteredBridges" :key="b.id">
             <td>{{ b.id }}</td>
             <td>{{ b.name_zh }}</td>
             <td>{{ b.dynasty }}</td>
@@ -57,8 +64,16 @@
             <label>建造年份<input v-model="bridgeForm.year_built" /></label>
             <label>描述<textarea v-model="bridgeForm.description" rows="3"></textarea></label>
             <label class="checkbox-label"><input type="checkbox" v-model="bridgeForm.has_model" /> 有3D模型</label>
-            <label v-if="bridgeForm.has_model">模型URL<input v-model="bridgeForm.model_url" /></label>
-            <label>图片URL<input v-model="bridgeForm.image_url" /></label>
+            <label v-if="bridgeForm.has_model">
+              模型URL<input v-model="bridgeForm.model_url" />
+              <span class="url-hint">支持 <code>./</code> 开头的相对路径（如 <code>./models/bridge.glb</code>），或 http 开头的完整URL</span>
+              <span v-if="bridgeUrlError" class="url-error">{{ bridgeUrlError }}</span>
+            </label>
+            <label>
+              图片URL<input v-model="bridgeForm.image_url" />
+              <span class="url-hint">支持 <code>./</code> 开头的相对路径（如 <code>./images/bridge.png</code>），或 http 开头的完整URL</span>
+              <span v-if="bridgeUrlError" class="url-error">{{ bridgeUrlError }}</span>
+            </label>
             <div class="form-actions">
               <button type="submit">保存</button>
               <button type="button" class="cancel" @click="showBridgeForm = false">取消</button>
@@ -72,14 +87,21 @@
     <div v-if="tab === 'products'">
       <div class="tab-header">
         <h2>商品管理</h2>
-        <button class="add-btn" @click="openProductForm()">新增商品</button>
+        <div class="tab-header-right">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input v-model="productSearch" placeholder="搜索商品名称..." />
+            <button v-if="productSearch" class="clear-btn" @click="productSearch = ''">✕</button>
+          </div>
+          <button class="add-btn" @click="openProductForm()">新增商品</button>
+        </div>
       </div>
       <table>
         <thead>
           <tr><th>ID</th><th>名称</th><th>价格</th><th>操作</th></tr>
         </thead>
         <tbody>
-          <tr v-for="p in products" :key="p.id">
+          <tr v-for="p in filteredProducts" :key="p.id">
             <td>{{ p.id }}</td>
             <td>{{ p.name_zh }}</td>
             <td>¥{{ p.price }}</td>
@@ -98,7 +120,11 @@
             <label>名称<input v-model="productForm.name_zh" required /></label>
             <label>价格<input v-model.number="productForm.price" type="number" step="0.01" required /></label>
             <label>描述<textarea v-model="productForm.description" rows="3"></textarea></label>
-            <label>图片URL<input v-model="productForm.image_url" /></label>
+            <label>
+              图片URL<input v-model="productForm.image_url" />
+              <span class="url-hint">支持 <code>./</code> 开头的相对路径（如 <code>./images/product.png</code>），或 http 开头的完整URL</span>
+              <span v-if="productUrlError" class="url-error">{{ productUrlError }}</span>
+            </label>
             <label>购买链接<input v-model="productForm.buy_link" /></label>
             <div class="form-actions">
               <button type="submit">保存</button>
@@ -113,14 +139,21 @@
     <div v-if="tab === 'chunks'">
       <div class="tab-header">
         <h2>知识片段管理</h2>
-        <button class="add-btn" @click="openChunkForm()">新增片段</button>
+        <div class="tab-header-right">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input v-model="chunkSearch" placeholder="搜索片段内容..." />
+            <button v-if="chunkSearch" class="clear-btn" @click="chunkSearch = ''">✕</button>
+          </div>
+          <button class="add-btn" @click="openChunkForm()">新增片段</button>
+        </div>
       </div>
       <table>
         <thead>
           <tr><th>ID</th><th>桥梁</th><th>内容</th><th>操作</th></tr>
         </thead>
         <tbody>
-          <tr v-for="c in chunks" :key="c.id">
+          <tr v-for="c in filteredChunks" :key="c.id">
             <td>{{ c.id }}</td>
             <td>{{ c.bridge_name || c.bridge_id }}</td>
             <td class="chunk-text">{{ truncate(c.text || c.content, 60) }}</td>
@@ -150,7 +183,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import {
   getBridgesAdmin, createBridge, updateBridge, deleteBridge,
   getProductsAdmin, createProduct, updateProduct, deleteProduct,
@@ -161,25 +194,70 @@ const tab = ref('bridges')
 
 // Bridges state
 const bridges = ref([])
+const bridgeSearch = ref('')
 const bridgePage = ref(1)
+
+const filteredBridges = computed(() => {
+  const q = bridgeSearch.value.trim().toLowerCase()
+  if (!q) return bridges.value
+  return bridges.value.filter(b => {
+    return ['name_zh', 'name_en', 'dynasty', 'type', 'province', 'city', 'district']
+      .some(key => (b[key] || '').toString().toLowerCase().includes(q))
+  })
+})
 const showBridgeForm = ref(false)
 const editingBridge = ref(null)
 const bridgeForm = ref({})
 
 // Products state
 const products = ref([])
+const productSearch = ref('')
 const showProductForm = ref(false)
+
+const filteredProducts = computed(() => {
+  const q = productSearch.value.trim().toLowerCase()
+  if (!q) return products.value
+  return products.value.filter(p => {
+    return ['name_zh', 'description'].some(key => (p[key] || '').toString().toLowerCase().includes(q))
+  })
+})
 const editingProduct = ref(null)
 const productForm = ref({})
 
 // Chunks state
 const chunks = ref([])
+const chunkSearch = ref('')
 const showChunkForm = ref(false)
+
+const filteredChunks = computed(() => {
+  const q = chunkSearch.value.trim().toLowerCase()
+  if (!q) return chunks.value
+  return chunks.value.filter(c => {
+  const text = c.text || c.content || ''
+    const bridge = (c.bridge_name || '').toString().toLowerCase()
+    return text.toLowerCase().includes(q) || bridge.includes(q)
+  })
+})
 const editingChunk = ref(null)
 const chunkForm = ref({})
 
 const dynastyList = ['先秦', '秦', '汉', '隋', '唐', '宋', '元', '明', '清']
 const typeList = ['梁桥', '拱桥', '木桥', '索桥', '廊桥', '浮桥']
+
+const bridgeUrlError = ref('')
+const productUrlError = ref('')
+
+function validateAssetUrl(url) {
+  if (!url || !url.trim()) return ''
+  const trimmed = url.trim()
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return ''
+  if (trimmed.startsWith('./')) {
+    if (trimmed.includes('..')) return '相对路径不允许包含 ".." 向上穿越字符'
+    if (!/^[a-zA-Z0-9_\-./]+$/.test(trimmed)) return '相对路径包含非法字符'
+    return ''
+  }
+  return ''
+}
 
 // --- Bridges ---
 async function fetchBridges() {
@@ -189,8 +267,9 @@ async function fetchBridges() {
   } catch { bridges.value = [] }
 }
 function openBridgeForm(bridge) {
+  bridgeUrlError.value = ''
   editingBridge.value = bridge || null
-  bridgeForm.value = bridge ? { ...bridge } : {
+  bridgeForm.value = bridge ? { ...bridge, has_model: !!bridge.has_model } : {
     name_zh: '', name_en: '', dynasty: '宋', type: '拱桥', material: '', province: '', city: '', district: '',
     coordinates: '', length_m: null, width_m: null, span_m: null, year_built: '',
     description: '', has_model: false, model_url: '', image_url: ''
@@ -198,6 +277,8 @@ function openBridgeForm(bridge) {
   showBridgeForm.value = true
 }
 async function saveBridge() {
+  bridgeUrlError.value = validateAssetUrl(bridgeForm.value.image_url) || validateAssetUrl(bridgeForm.value.model_url)
+  if (bridgeUrlError.value) return
   try {
     if (editingBridge.value?.id) {
       await updateBridge(editingBridge.value.id, bridgeForm.value)
@@ -206,12 +287,18 @@ async function saveBridge() {
     }
     showBridgeForm.value = false
     await fetchBridges()
-  } catch { /* handle error */ }
+  } catch (e) {
+    alert('保存桥梁失败：' + (e?.response?.data?.detail || e?.message || '未知错误'))
+  }
 }
 async function deleteBridgeItem(id) {
   if (!confirm('确认删除？')) return
   try { await deleteBridge(id); await fetchBridges() } catch {}
 }
+
+watch(() => bridgeForm.value.has_model, (val) => {
+  if (!val) bridgeForm.value.model_url = ''
+})
 
 // --- Products ---
 async function fetchProducts() {
@@ -221,11 +308,14 @@ async function fetchProducts() {
   } catch { products.value = [] }
 }
 function openProductForm(product) {
+  productUrlError.value = ''
   editingProduct.value = product || null
   productForm.value = product ? { ...product } : { name_zh: '', price: 0, description: '', image_url: '', buy_link: '' }
   showProductForm.value = true
 }
 async function saveProduct() {
+  productUrlError.value = validateAssetUrl(productForm.value.image_url)
+  if (productUrlError.value) return
   try {
     if (editingProduct.value?.id) {
       await updateProduct(editingProduct.value.id, productForm.value)
@@ -234,7 +324,9 @@ async function saveProduct() {
     }
     showProductForm.value = false
     await fetchProducts()
-  } catch {}
+  } catch (e) {
+    alert('保存商品失败：' + (e?.response?.data?.detail || e?.message || '未知错误'))
+  }
 }
 async function deleteProductItem(id) {
   if (!confirm('确认删除？')) return
@@ -296,6 +388,31 @@ watch(bridgePage, () => { fetchBridges() })
 .tabs button.active { background: #6B4F3A; color: #fff; border-color: #9C5A2C; }
 .tab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .tab-header h2 { margin: 0; font-size: 18px; }
+.tab-header-right { display: flex; gap: 12px; align-items: center; }
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 6px 12px;
+  gap: 8px;
+  width: 260px;
+  transition: border-color 0.2s;
+}
+.search-box:focus-within { border-color: #9C5A2C; }
+.search-box .search-icon { width: 16px; height: 16px; color: #999; flex-shrink: 0; }
+.search-box input {
+  flex: 1;
+  border: none; outline: none;
+  background: transparent;
+  font-size: 13px; color: #333;
+  font-family: inherit;
+  min-width: 0;
+}
+.search-box input::placeholder { color: #bbb; font-size: 12px; }
+.search-box .clear-btn { background: none; border: none; color: #999; cursor: pointer; font-size: 14px; padding: 0 2px; }
+.search-box .clear-btn:hover { color: #6B4F3A; }
 .add-btn {
   padding: 10px 20px;
   background: linear-gradient(135deg, #6B4F3A, #7d5e4a);
@@ -341,6 +458,23 @@ th { background: linear-gradient(180deg, #f5f0ea, #f0ebe3); font-weight: 600; }
   font-family: inherit;
 }
 .checkbox-label { flex-direction: row !important; align-items: center; gap: 8px; }
+.url-hint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.url-hint code {
+  background: #f0ebe3;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+.url-error {
+  font-size: 12px;
+  color: #e74c3c;
+  margin-top: 2px;
+}
 .form-actions { display: flex; gap: 12px; margin-top: 8px; }
 .form-actions button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
 .form-actions button[type="submit"] {

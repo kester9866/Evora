@@ -9,6 +9,11 @@
           <p>{{ error }}</p>
           <button @click="$router.push('/map')">返回地图</button>
         </div>
+        <div v-if="!loading && !error" class="viewer-hints">
+          <span>🖱 左键拖拽旋转</span>
+          <span>🔍 滚轮缩放</span>
+          <span>✋ 右键拖拽平移</span>
+        </div>
       </div>
 
       <aside class="info-sidebar" v-if="bridge">
@@ -32,6 +37,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import { getBridge } from '../api/bridges.js'
+import { resolveAssetUrl } from '../utils/asset'
 
 const route = useRoute()
 const viewerRef = ref(null)
@@ -68,7 +74,7 @@ onMounted(async () => {
     scene = new THREE.Scene()
     scene.background = new THREE.Color(0xf5f0ea)
 
-    camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000)
+    camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.01, 10000)
     camera.position.set(5, 3, 5)
 
     renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -87,9 +93,24 @@ onMounted(async () => {
 
     const loader = new GLTFLoader()
     loader.load(
-      bridge.value.model_url,
+      resolveAssetUrl(bridge.value.model_url),
       (gltf) => {
         scene.add(gltf.scene)
+
+        // Auto-fit camera to model bounding box
+        const box = new THREE.Box3().setFromObject(gltf.scene)
+        const center = new THREE.Vector3()
+        const size = new THREE.Vector3()
+        box.getCenter(center)
+        box.getSize(size)
+
+        const maxDim = Math.max(size.x, size.y, size.z)
+        const dist = maxDim * 1.8
+
+        camera.position.set(center.x + dist * 0.6, center.y + dist * 0.5, center.z + dist)
+        controls.target.copy(center)
+        controls.update()
+
         loading.value = false
       },
       undefined,
@@ -172,6 +193,25 @@ onBeforeUnmount(() => {
   text-align: center;
 }
 .error-state p { margin-bottom: 12px; color: #666; }
+.viewer-hints {
+  position: absolute;
+  bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  animation: hint-fade 6s ease-in-out forwards;
+}
+@keyframes hint-fade {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0.15; }
+}
 .info-sidebar {
   width: 300px;
   background: #fff;
