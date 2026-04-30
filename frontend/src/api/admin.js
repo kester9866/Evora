@@ -5,8 +5,8 @@ export function login(username, password) {
 }
 
 // Bridges admin CRUD
-export function getBridgesAdmin(page = 1, limit = 20) {
-  return api.get('/admin/bridges', { params: { page, limit } }).then(r => r.data)
+export function getBridgesAdmin(params = {}) {
+  return api.get('/admin/bridges', { params }).then(r => r.data)
 }
 export function createBridge(data) {
   return api.post('/admin/bridges', data).then(r => r.data)

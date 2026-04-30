@@ -1,7 +1,7 @@
 <template>
   <div class="admin-layout">
     <nav class="admin-nav">
-      <router-link to="/admin" class="admin-brand">管理后台</router-link>
+      <router-link to="/admin" class="admin-brand">营造司</router-link>
       <div class="admin-nav-links">
         <router-link to="/admin">桥梁管理</router-link>
         <router-link to="/">返回主页</router-link>

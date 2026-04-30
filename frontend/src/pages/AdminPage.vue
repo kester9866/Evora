@@ -13,8 +13,8 @@
         <div class="tab-header-right">
           <div class="search-box">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input v-model="bridgeSearch" placeholder="搜索名称、朝代、地点..." />
-            <button v-if="bridgeSearch" class="clear-btn" @click="bridgeSearch = ''">✕</button>
+            <input v-model="bridgeSearch" placeholder="搜索名称、朝代、地点..." @input="onBridgeSearch" />
+            <button v-if="bridgeSearch" class="clear-btn" @click="bridgeSearch = ''; onBridgeSearch()">✕</button>
           </div>
           <button class="add-btn" @click="openBridgeForm()">新增桥梁</button>
         </div>
@@ -26,7 +26,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="b in filteredBridges" :key="b.id">
+          <tr v-for="b in bridges" :key="b.id">
             <td>{{ b.id }}</td>
             <td>{{ b.name_zh }}</td>
             <td>{{ b.dynasty }}</td>
@@ -197,14 +197,12 @@ const bridges = ref([])
 const bridgeSearch = ref('')
 const bridgePage = ref(1)
 
-const filteredBridges = computed(() => {
-  const q = bridgeSearch.value.trim().toLowerCase()
-  if (!q) return bridges.value
-  return bridges.value.filter(b => {
-    return ['name_zh', 'name_en', 'dynasty', 'type', 'province', 'city', 'district']
-      .some(key => (b[key] || '').toString().toLowerCase().includes(q))
-  })
-})
+let bridgeSearchTimer = null
+function onBridgeSearch() {
+  clearTimeout(bridgeSearchTimer)
+  bridgePage.value = 1
+  bridgeSearchTimer = setTimeout(() => { fetchBridges() }, 250)
+}
 const showBridgeForm = ref(false)
 const editingBridge = ref(null)
 const bridgeForm = ref({})
@@ -262,7 +260,9 @@ function validateAssetUrl(url) {
 // --- Bridges ---
 async function fetchBridges() {
   try {
-    const data = await getBridgesAdmin(bridgePage.value, 20)
+    const params = { page: bridgePage.value, limit: 20 }
+    if (bridgeSearch.value.trim()) params.q = bridgeSearch.value.trim()
+    const data = await getBridgesAdmin(params)
     bridges.value = data.items || []
   } catch { bridges.value = [] }
 }

@@ -9,6 +9,7 @@ async def get_bridges(
     dynasty: str = Query(None),
     type: str = Query(None),
     province: str = Query(None),
+    q: str = Query(None, description="Keyword search across name, dynasty, type, province, city"),
     page: int = Query(1, ge=1),
     limit: int = Query(50, ge=1, le=200)
 ):
@@ -25,6 +26,10 @@ async def get_bridges(
     if province:
         conditions.append("province = ?")
         params.append(province)
+    if q:
+        q_like = f"%{q}%"
+        conditions.append("(name_zh LIKE ? OR name_en LIKE ? OR dynasty LIKE ? OR type LIKE ? OR province LIKE ? OR city LIKE ? OR district LIKE ? OR material LIKE ?)")
+        params.extend([q_like] * 8)
 
     where = "WHERE " + " AND ".join(conditions) if conditions else ""
     offset = (page - 1) * limit

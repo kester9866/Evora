@@ -1,6 +1,6 @@
 <template>
   <div class="shop-page">
-    <h1>文创商店</h1>
+    <h1>桥韵雅集</h1>
 
     <div v-if="loading" class="skeleton-grid">
       <div v-for="i in 6" :key="i" class="skeleton-card">
@@ -67,8 +67,20 @@ onMounted(async () => {
 h1 { margin: 0 0 24px; font-size: 24px; color: #333; }
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+}
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .shop-page { padding: 24px 20px; }
+}
+@media (max-width: 560px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
 }
 .product-card {
   background: #fff;
@@ -97,8 +109,14 @@ h1 { margin: 0 0 24px; font-size: 24px; color: #333; }
 .price { color: #9C5A2C; font-weight: 600; font-size: 18px; margin: 0; }
 .skeleton-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+}
+@media (max-width: 900px) {
+  .skeleton-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+}
+@media (max-width: 560px) {
+  .skeleton-grid { grid-template-columns: 1fr; }
 }
 .skeleton-card {
   background: #fff;

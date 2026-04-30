@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from pydantic import BaseModel, field_validator
 from app.db import get_db
 from app.auth import verify_password, create_token, verify_token
@@ -100,13 +100,33 @@ async def login(body: LoginRequest):
 
 # --- Bridges Admin ---
 @router.get("/admin/bridges")
-async def get_bridges_admin(page: int = 1, limit: int = 20, _=Depends(get_current_admin)):
+async def get_bridges_admin(
+    page: int = 1,
+    limit: int = 20,
+    q: str = Query(None, description="Keyword search across name, dynasty, type, province, city"),
+    _=Depends(get_current_admin)
+):
     db = await get_db()
+    conditions = []
+    params = []
+
+    if q:
+        q_like = f"%{q}%"
+        conditions.append("(name_zh LIKE ? OR name_en LIKE ? OR dynasty LIKE ? OR type LIKE ? OR province LIKE ? OR city LIKE ? OR district LIKE ? OR material LIKE ?)")
+        params.extend([q_like] * 8)
+
+    where = "WHERE " + " AND ".join(conditions) if conditions else ""
     offset = (page - 1) * limit
-    cursor = await db.execute("SELECT * FROM bridges ORDER BY id DESC LIMIT ? OFFSET ?", [limit, offset])
+
+    cursor = await db.execute(
+        f"SELECT * FROM bridges {where} ORDER BY id DESC LIMIT ? OFFSET ?",
+        params + [limit, offset]
+    )
     rows = await cursor.fetchall()
-    cursor = await db.execute("SELECT COUNT(*) FROM bridges")
+
+    cursor = await db.execute(f"SELECT COUNT(*) FROM bridges {where}", params)
     total = (await cursor.fetchone())[0]
+
     return {"items": [dict(r) for r in rows], "total": total, "page": page, "limit": limit}
 
 
